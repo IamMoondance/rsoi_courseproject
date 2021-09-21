@@ -8,7 +8,7 @@ WORKDIR /car
 COPY requirements.txt .
 
 # install dependencies
-RUN pip install -r requirements.txt
+RUN pip3 install -r requirements.txt
 
 # copy the content of the local directory to the working directory
 COPY . .
