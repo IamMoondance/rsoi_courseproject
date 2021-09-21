@@ -6,6 +6,30 @@
 	},
 	"item": [
 		{
+			"name": "Init",
+			"item": [
+				{
+					"name": "AdminInit",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{userservice}}/{{apipath}}/session/init_database",
+							"host": [
+								"{{userservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"session",
+								"init_database"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "User",
 			"item": [
 				{

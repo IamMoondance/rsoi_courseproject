@@ -223,8 +223,10 @@ class SessionValidateView(APIView):
 ## Инициализация базы данных администратором
 class InitDBView(APIView):
     def get(self, request):
-        admin_data = User(user_uid=uuid.uuid1(), login='admin',
-                    password='admin', surname='AdminSurname', name='AdminName',
-                    patronymic='AdminPatronymic', role=True, refresh_token='')
-        admin_data.save()
+        adm = User.objects.filter(login="admin")
+        if len(adm) == 0:
+            admin_data = User(user_uid=uuid.uuid1(), login='admin',
+                        password='admin', surname='AdminSurname', name='AdminName',
+                        patronymic='AdminPatronymic', role=True, refresh_token='')
+            admin_data.save()
         return HttpResponse(status=204)
