@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "ee0ddeb5-9fd3-4270-b140-ef843a98c8ac",
+		"_postman_id": "30076c0d-f563-4fcc-b4eb-977438f1257a",
 		"name": "RSOI-Cars-Rent",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -21,6 +21,22 @@
 								],
 								"type": "text/javascript"
 							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var length           = 12;\r",
+									"var result           = '';\r",
+									"var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';\r",
+									"var charactersLength = characters.length;\r",
+									"for ( var i = 0; i < length; i++ ) {\r",
+									"    result += characters.charAt(Math.floor(Math.random() * charactersLength));\r",
+									"}\r",
+									"pm.environment.set('login',result);"
+								],
+								"type": "text/javascript"
+							}
 						}
 					],
 					"request": {
@@ -28,7 +44,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"login\":\"ivanych\",\r\n    \"password\":\"qwerty\",\r\n    \"surname\":\"Иванов\",\r\n    \"name\":\"Иван\",\r\n    \"patronymic\":\"Иванович\"\r\n}",
+							"raw": "{\r\n    \"login\":\"{{login}}\",\r\n    \"password\":\"qwerty\",\r\n    \"surname\":\"Иванов\",\r\n    \"name\":\"Иван\",\r\n    \"patronymic\":\"Иванович\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -56,8 +72,8 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 201\", () => {\r",
-									"  pm.expect(pm.response.code).to.eql(201);\r",
+									"pm.test(\"Status code is 400\", () => {\r",
+									"  pm.expect(pm.response.code).to.eql(400);\r",
 									"});"
 								],
 								"type": "text/javascript"
@@ -155,6 +171,16 @@
 								],
 								"type": "text/javascript"
 							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var basictoken = btoa(pm.environment.get(\"login\")+\":qwerty\");\r",
+									"pm.environment.set(\"basictoken\",basictoken);"
+								],
+								"type": "text/javascript"
+							}
 						}
 					],
 					"request": {
@@ -162,7 +188,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Basic aXZhbnljaDpxd2VydHk=",
+								"value": "Basic {{basictoken}}",
 								"type": "text"
 							}
 						],
@@ -181,13 +207,26 @@
 					"response": []
 				},
 				{
-					"name": "BasicSignInEmptyHeaderValue",
+					"name": "BasicAdminSignIn",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									""
+									"pm.test(\"Status code is 200\", () => {\r",
+									"  pm.expect(pm.response.code).to.eql(200);\r",
+									"});\r",
+									"\r",
+									"pm.environment.set(\"admin_jwt\", pm.response.text());\r",
+									"\r",
+									"var payload = pm.response.text().split(\".\")[1];\r",
+									"\r",
+									"\r",
+									"var words = CryptoJS.enc.Base64.parse(payload);\r",
+									"var textString = CryptoJS.enc.Utf8.stringify(words);\r",
+									"\r",
+									"var user = JSON.parse(textString)\r",
+									"pm.environment.set(\"admin_uid\",user[\"userUid\"])"
 								],
 								"type": "text/javascript"
 							}
@@ -199,7 +238,7 @@
 							{
 								"key": "Authorization",
 								"type": "text",
-								"value": "Basic"
+								"value": "Basic YWRtaW46YWRtaW4="
 							}
 						],
 						"url": {
@@ -226,6 +265,15 @@
 									"pm.test(\"Status code is 404\", () => {\r",
 									"    pm.expect(pm.response.code).to.eql(404);\r",
 									"})"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -261,8 +309,8 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 200\", () => {\r",
-									"  pm.expect(pm.response.code).to.eql(200);\r",
+									"pm.test(\"Status code is 401\", () => {\r",
+									"  pm.expect(pm.response.code).to.eql(401);\r",
 									"});"
 								],
 								"type": "text/javascript"
@@ -325,42 +373,6 @@
 								"key": "Authorization",
 								"type": "text",
 								"value": "Bearer {{user_jwt}}"
-							}
-						],
-						"url": {
-							"raw": "{{userservice}}/{{apipath}}/session/authorize",
-							"host": [
-								"{{userservice}}"
-							],
-							"path": [
-								"{{apipath}}",
-								"session",
-								"authorize"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "BearerSignInWithoutValue",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"type": "text",
-								"value": "Bearer"
 							}
 						],
 						"url": {
@@ -652,6 +664,19 @@
 			"item": [
 				{
 					"name": "GetAllCarsUnauthorized",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -707,6 +732,19 @@
 				},
 				{
 					"name": "GetAllCarsSuccess",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [
@@ -736,8 +774,8 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 401\", () => {\r",
-									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"pm.test(\"Status code is 201\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(201);\r",
 									"});\r",
 									"\r",
 									"pm.environment.set(\"car_uid\",pm.response.text());"
@@ -751,7 +789,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{user_jwt}}",
+								"value": "Bearer {{admin_jwt}}",
 								"type": "text"
 							}
 						],
@@ -776,7 +814,7 @@
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -840,6 +878,19 @@
 				},
 				{
 					"name": "AddNewCarForbidden",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 403\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(403);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -873,200 +924,6 @@
 									"value": null,
 									"disabled": true
 								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "AddNewCarInvalide",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{user_jwt}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"brand\": \"Kia\",\r\n    \"car_model\": \"Rio\",\r\n    \"power\": \"100\",\r\n    \"car_type\": \"Седан\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{carservice}}/{{apipath}}/cars",
-							"host": [
-								"{{carservice}}"
-							],
-							"path": [
-								"{{apipath}}",
-								"cars"
-							],
-							"query": [
-								{
-									"key": "",
-									"value": null,
-									"disabled": true
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "DeleteCarValid",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 401\", () => {\r",
-									"    pm.expect(pm.response.code).to.eql(401);\r",
-									"})"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{user_jwt}}",
-								"type": "text",
-								"disabled": true
-							}
-						],
-						"url": {
-							"raw": "{{carservice}}/{{apipath}}/cars/{{car_uid}}",
-							"host": [
-								"{{carservice}}"
-							],
-							"path": [
-								"{{apipath}}",
-								"cars",
-								"{{car_uid}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "DeleteCarForbidden",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 401\", () => {\r",
-									"    pm.expect(pm.response.code).to.eql(401);\r",
-									"})"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{user_jwt}}",
-								"type": "text",
-								"disabled": true
-							}
-						],
-						"url": {
-							"raw": "{{carservice}}/{{apipath}}/cars/{{car_uid}}",
-							"host": [
-								"{{carservice}}"
-							],
-							"path": [
-								"{{apipath}}",
-								"cars",
-								"{{car_uid}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "DeleteCarInvalid",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 404\", () => {\r",
-									"    pm.expect(pm.response.code).to.eql(404);\r",
-									"})"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{user_jwt}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{carservice}}/{{apipath}}/cars/{{car_uid}}",
-							"host": [
-								"{{carservice}}"
-							],
-							"path": [
-								"{{apipath}}",
-								"cars",
-								"{{car_uid}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "DeleteCarUnauthorized",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", () => {\r",
-									"    pm.expect(pm.response.code).to.eql(200);\r",
-									"})"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{user_jwt}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{carservice}}/{{apipath}}/cars/{{car_uid}}",
-							"host": [
-								"{{carservice}}"
-							],
-							"path": [
-								"{{apipath}}",
-								"cars",
-								"{{car_uid}}"
 							]
 						}
 					},
@@ -1151,7 +1008,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"price\":\"100\"\r\n}",
+							"raw": "{\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1524,59 +1381,13 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{user_jwt}}",
+								"value": "Bearer {{admin_jwt}}",
 								"type": "text"
 							}
 						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\r\n     \"location\":\"testlocation\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{officesservice}}/{{apipath}}/offices",
-							"host": [
-								"{{officesservice}}"
-							],
-							"path": [
-								"{{apipath}}",
-								"offices"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "AddNewOfficeInvalid",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 400\", () => {\r",
-									"    pm.expect(pm.response.code).to.eql(400);\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"type": "text",
-								"value": "Bearer {{user_jwt}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n     \"location\":100\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1782,6 +1593,287 @@
 					"response": []
 				},
 				{
+					"name": "AddOfficeCarValid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/car/{{car_uid}}",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices",
+								"{{office_uid}}",
+								"car",
+								"{{car_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddOfficeCarNotFoundCar",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(404);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/car/{{zerouid}}",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices",
+								"{{office_uid}}",
+								"car",
+								"{{zerouid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddOfficeCarNotFoundOffice",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(404);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices/{{zerouid}}/car/{{car_uid}}",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices",
+								"{{zerouid}}",
+								"car",
+								"{{car_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddOfficeCarUnauthorized",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_jwt}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/car/{{car_uid}}",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices",
+								"{{office_uid}}",
+								"car",
+								"{{car_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddOfficeCarBrokenToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}x",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/car/{{car_uid}}",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices",
+								"{{office_uid}}",
+								"car",
+								"{{car_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddOfficeCarWithoutToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/car/{{car_uid}}",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices",
+								"{{office_uid}}",
+								"car",
+								"{{car_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddOfficeCarWrongTokenType",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Blabla {{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/car/{{car_uid}}",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices",
+								"{{office_uid}}",
+								"car",
+								"{{car_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "CarsInOfficeValid",
 					"event": [
 						{
@@ -1806,12 +1898,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{officesservice}}/{{apipath}}/{{office_uid}}/cars",
+							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/cars",
 							"host": [
 								"{{officesservice}}"
 							],
 							"path": [
 								"{{apipath}}",
+								"offices",
 								"{{office_uid}}",
 								"cars"
 							]
@@ -1844,12 +1937,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{officesservice}}/{{apipath}}/{{zerouid}}/cars",
+							"raw": "{{officesservice}}/{{apipath}}/offices/{{zerouid}}/cars",
 							"host": [
 								"{{officesservice}}"
 							],
 							"path": [
 								"{{apipath}}",
+								"offices",
 								"{{zerouid}}",
 								"cars"
 							]
@@ -1882,37 +1976,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{officesservice}}/{{apipath}}/{{office_uid}}/cars",
+							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/cars",
 							"host": [
 								"{{officesservice}}"
 							],
 							"path": [
 								"{{apipath}}",
-								"{{office_uid}}",
-								"cars"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "CarsInOfficeWrongTokenType",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"type": "text",
-								"value": "Blabla {{user_jwt}}"
-							}
-						],
-						"url": {
-							"raw": "{{officesservice}}/{{apipath}}/{{office_uid}}/cars",
-							"host": [
-								"{{officesservice}}"
-							],
-							"path": [
-								"{{apipath}}",
+								"offices",
 								"{{office_uid}}",
 								"cars"
 							]
@@ -1945,12 +2015,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{officesservice}}/{{apipath}}/{{office_uid}}/cars",
+							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/cars",
 							"host": [
 								"{{officesservice}}"
 							],
 							"path": [
 								"{{apipath}}",
+								"offices",
 								"{{office_uid}}",
 								"cars"
 							]
@@ -1984,12 +2055,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{officesservice}}/{{apipath}}/{{office_uid}}/cars",
+							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/cars",
 							"host": [
 								"{{officesservice}}"
 							],
 							"path": [
 								"{{apipath}}",
+								"offices",
 								"{{office_uid}}",
 								"cars"
 							]
@@ -2257,13 +2329,12 @@
 							}
 						],
 						"url": {
-							"raw": "{{officesservice}}/{{apipath}}//offices/{{office_uid}}/cars/{{car_uid}}",
+							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/cars/{{car_uid}}",
 							"host": [
 								"{{officesservice}}"
 							],
 							"path": [
 								"{{apipath}}",
-								"",
 								"offices",
 								"{{office_uid}}",
 								"cars",
@@ -2298,13 +2369,12 @@
 							}
 						],
 						"url": {
-							"raw": "{{officesservice}}/{{apipath}}//offices/{{zerouid}}/cars/{{car_uid}}",
+							"raw": "{{officesservice}}/{{apipath}}/offices/{{zerouid}}/cars/{{car_uid}}",
 							"host": [
 								"{{officesservice}}"
 							],
 							"path": [
 								"{{apipath}}",
-								"",
 								"offices",
 								"{{zerouid}}",
 								"cars",
@@ -2339,13 +2409,12 @@
 							}
 						],
 						"url": {
-							"raw": "{{officesservice}}/{{apipath}}//offices/{{office_uid}}/cars/{{zerouid}}",
+							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/cars/{{zerouid}}",
 							"host": [
 								"{{officesservice}}"
 							],
 							"path": [
 								"{{apipath}}",
-								"",
 								"offices",
 								"{{office_uid}}",
 								"cars",
@@ -2381,13 +2450,12 @@
 							}
 						],
 						"url": {
-							"raw": "{{officesservice}}/{{apipath}}//offices/{{office_uid}}/cars/{{car_uid}}",
+							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/cars/{{car_uid}}",
 							"host": [
 								"{{officesservice}}"
 							],
 							"path": [
 								"{{apipath}}",
-								"",
 								"offices",
 								"{{office_uid}}",
 								"cars",
@@ -2422,13 +2490,12 @@
 							}
 						],
 						"url": {
-							"raw": "{{officesservice}}/{{apipath}}//offices/{{office_uid}}/cars/{{car_uid}}",
+							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/cars/{{car_uid}}",
 							"host": [
 								"{{officesservice}}"
 							],
 							"path": [
 								"{{apipath}}",
-								"",
 								"offices",
 								"{{office_uid}}",
 								"cars",
@@ -2463,13 +2530,12 @@
 							}
 						],
 						"url": {
-							"raw": "{{officesservice}}/{{apipath}}//offices/{{office_uid}}/cars/{{car_uid}}",
+							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/cars/{{car_uid}}",
 							"host": [
 								"{{officesservice}}"
 							],
 							"path": [
 								"{{apipath}}",
-								"",
 								"offices",
 								"{{office_uid}}",
 								"cars",
@@ -2504,538 +2570,15 @@
 							}
 						],
 						"url": {
-							"raw": "{{officesservice}}/{{apipath}}//offices/{{office_uid}}/cars/{{car_uid}}",
+							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/cars/{{car_uid}}",
 							"host": [
 								"{{officesservice}}"
 							],
 							"path": [
 								"{{apipath}}",
-								"",
 								"offices",
 								"{{office_uid}}",
 								"cars",
-								"{{car_uid}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "AddOfficeCarValid",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", () => {\r",
-									"    pm.expect(pm.response.code).to.eql(200);\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{user_jwt}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/car/{{car_uid}}",
-							"host": [
-								"{{officesservice}}"
-							],
-							"path": [
-								"{{apipath}}",
-								"offices",
-								"{{office_uid}}",
-								"car",
-								"{{car_uid}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "AddOfficeCarNotFoundCar",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 404\", () => {\r",
-									"    pm.expect(pm.response.code).to.eql(404);\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{user_jwt}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/car/{{car_uid}}",
-							"host": [
-								"{{officesservice}}"
-							],
-							"path": [
-								"{{apipath}}",
-								"offices",
-								"{{office_uid}}",
-								"car",
-								"{{car_uid}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "AddOfficeCarNotFoundOffice",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 404\", () => {\r",
-									"    pm.expect(pm.response.code).to.eql(404);\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{user_jwt}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/car/{{car_uid}}",
-							"host": [
-								"{{officesservice}}"
-							],
-							"path": [
-								"{{apipath}}",
-								"offices",
-								"{{office_uid}}",
-								"car",
-								"{{car_uid}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "AddOfficeCarUnauthorized",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 401\", () => {\r",
-									"    pm.expect(pm.response.code).to.eql(401);\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{user_jwt}}",
-								"type": "text",
-								"disabled": true
-							}
-						],
-						"url": {
-							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/car/{{car_uid}}",
-							"host": [
-								"{{officesservice}}"
-							],
-							"path": [
-								"{{apipath}}",
-								"offices",
-								"{{office_uid}}",
-								"car",
-								"{{car_uid}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "AddOfficeCarBrokenToken",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 401\", () => {\r",
-									"    pm.expect(pm.response.code).to.eql(401);\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{user_jwt}}x",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/car/{{car_uid}}",
-							"host": [
-								"{{officesservice}}"
-							],
-							"path": [
-								"{{apipath}}",
-								"offices",
-								"{{office_uid}}",
-								"car",
-								"{{car_uid}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "AddOfficeCarWithoutToken",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 401\", () => {\r",
-									"    pm.expect(pm.response.code).to.eql(401);\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/car/{{car_uid}}",
-							"host": [
-								"{{officesservice}}"
-							],
-							"path": [
-								"{{apipath}}",
-								"offices",
-								"{{office_uid}}",
-								"car",
-								"{{car_uid}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "AddOfficeCarWrongTokenType",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 401\", () => {\r",
-									"    pm.expect(pm.response.code).to.eql(401);\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Blabla {{user_jwt}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/car/{{car_uid}}",
-							"host": [
-								"{{officesservice}}"
-							],
-							"path": [
-								"{{apipath}}",
-								"offices",
-								"{{office_uid}}",
-								"car",
-								"{{car_uid}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "DeleteOfficeCarValid",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", () => {\r",
-									"    pm.expect(pm.response.code).to.eql(200);\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{user_jwt}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/car/{{car_uid}}",
-							"host": [
-								"{{officesservice}}"
-							],
-							"path": [
-								"{{apipath}}",
-								"offices",
-								"{{office_uid}}",
-								"car",
-								"{{car_uid}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "DeleteOfficeCarNotFound",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", () => {\r",
-									"    pm.expect(pm.response.code).to.eql(200);\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{user_jwt}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{officesservice}}/{{apipath}}/offices/{{zerouid}}/car/{{zerouid}}",
-							"host": [
-								"{{officesservice}}"
-							],
-							"path": [
-								"{{apipath}}",
-								"offices",
-								"{{zerouid}}",
-								"car",
-								"{{zerouid}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "DeleteOfficeCarUnauthorized",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", () => {\r",
-									"    pm.expect(pm.response.code).to.eql(200);\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{user_jwt}}",
-								"type": "text",
-								"disabled": true
-							}
-						],
-						"url": {
-							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/car/{{car_uid}}",
-							"host": [
-								"{{officesservice}}"
-							],
-							"path": [
-								"{{apipath}}",
-								"offices",
-								"{{office_uid}}",
-								"car",
-								"{{car_uid}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "DeleteOfficeCarWrongTokenType",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", () => {\r",
-									"    pm.expect(pm.response.code).to.eql(200);\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Blabla {{user_jwt}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/car/{{car_uid}}",
-							"host": [
-								"{{officesservice}}"
-							],
-							"path": [
-								"{{apipath}}",
-								"offices",
-								"{{office_uid}}",
-								"car",
-								"{{car_uid}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "DeleteOfficeCarWithoutToken",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", () => {\r",
-									"    pm.expect(pm.response.code).to.eql(200);\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/car/{{car_uid}}",
-							"host": [
-								"{{officesservice}}"
-							],
-							"path": [
-								"{{apipath}}",
-								"offices",
-								"{{office_uid}}",
-								"car",
-								"{{car_uid}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "DeleteOfficeCarBrokenToken",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", () => {\r",
-									"    pm.expect(pm.response.code).to.eql(200);\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{user_jwt}}x",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/car/{{car_uid}}",
-							"host": [
-								"{{officesservice}}"
-							],
-							"path": [
-								"{{apipath}}",
-								"offices",
-								"{{office_uid}}",
-								"car",
 								"{{car_uid}}"
 							]
 						}
@@ -3087,7 +2630,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"car_uid\": \"{{car_uid}}\",\r\n    \"user_uid\": \"{{useruid}}\",\r\n    \"payment_uid\": \"{{payment_uid}}\",\r\n    \"rent_from\": \"{{start_date}}\",\r\n    \"rent_until\": \"{{end_date}}\",\r\n    \"rec_office_uid\":{{office_uid}},\r\n    \"ret_office_uid\":{{office_uid}}\r\n}",
+							"raw": "{\r\n    \"car_uid\": \"{{car_uid}}\",\r\n    \"user_uid\": \"{{useruid}}\",\r\n    \"payment_uid\": \"{{payment_uid}}\",\r\n    \"rent_from\": \"{{start_date}}\",\r\n    \"rent_until\": \"{{end_date}}\",\r\n    \"rec_office_uid\":\"{{office_uid}}\",\r\n    \"ret_office_uid\":\"{{office_uid}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3145,7 +2688,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"car_uid\": \"{{car_uid}}\",\r\n    \"user_uid\": \"{{useruid}}\",\r\n    \"payment_uid\": \"{{payment_uid}}\",\r\n    \"rent_from\": \"{{start_date}}\",\r\n    \"rent_until\": \"{{end_date}}\",\r\n}",
+							"raw": "{\r\n    \"car_uid\": \"{{car_uid}}\",\r\n    \"user_uid\": \"{{useruid}}\",\r\n    \"payment_uid\": \"{{payment_uid}}\",\r\n    \"rent_from\": \"{{start_date}}\",\r\n    \"rent_until\": \"{{end_date}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3203,7 +2746,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"car_uid\": \"{{car_uid}}\",\r\n    \"user_uid\": \"{{useruid}}\",\r\n    \"payment_uid\": \"{{payment_uid}}\",\r\n    \"rent_from\": \"{{start_date}}\",\r\n    \"rent_until\": \"{{end_date}}\",\r\n    \"rec_office_uid\":{{office_uid}},\r\n    \"ret_office_uid\":{{office_uid}}\r\n}",
+							"raw": "{\r\n    \"car_uid\": \"{{car_uid}}\",\r\n    \"user_uid\": \"{{useruid}}\",\r\n    \"payment_uid\": \"{{payment_uid}}\",\r\n    \"rent_from\": \"{{start_date}}\",\r\n    \"rent_until\": \"{{end_date}}\",\r\n    \"rec_office_uid\":\"{{office_uid}}\",\r\n    \"ret_office_uid\":\"{{office_uid}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3262,7 +2805,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"car_uid\": \"{{car_uid}}\",\r\n    \"user_uid\": \"{{useruid}}\",\r\n    \"payment_uid\": \"{{payment_uid}}\",\r\n    \"rent_from\": \"{{start_date}}\",\r\n    \"rent_until\": \"{{end_date}}\",\r\n    \"rec_office_uid\":{{office_uid}},\r\n    \"ret_office_uid\":{{office_uid}}\r\n}",
+							"raw": "{\r\n    \"car_uid\": \"{{car_uid}}\",\r\n    \"user_uid\": \"{{useruid}}\",\r\n    \"payment_uid\": \"{{payment_uid}}\",\r\n    \"rent_from\": \"{{start_date}}\",\r\n    \"rent_until\": \"{{end_date}}\",\r\n    \"rec_office_uid\":\"{{office_uid}}\",\r\n    \"ret_office_uid\":\"{{office_uid}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3610,7 +3153,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{user_jwt}}",
+								"value": "Blabla {{user_jwt}}",
 								"type": "text"
 							}
 						],
@@ -3623,6 +3166,917 @@
 								"{{apipath}}",
 								"rental",
 								"{{rental_uid}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Stat",
+			"item": [
+				{
+					"name": "ModelStatValid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_jwt}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"model\":\"Rio\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{statservice}}/{{apipath}}/reports/booking-by-models",
+							"host": [
+								"{{statservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"reports",
+								"booking-by-models"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ModelStatBrokenToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_jwt}}x",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"model\":\"Rio\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{statservice}}/{{apipath}}/reports/booking-by-models",
+							"host": [
+								"{{statservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"reports",
+								"booking-by-models"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ModelStatWithoutToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"model\":\"Rio\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{statservice}}/{{apipath}}/reports/booking-by-models",
+							"host": [
+								"{{statservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"reports",
+								"booking-by-models"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ModelStatWrongTokenType",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Blabla {{admin_jwt}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"model\":\"Rio\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{statservice}}/{{apipath}}/reports/booking-by-models",
+							"host": [
+								"{{statservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"reports",
+								"booking-by-models"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ModelStatUnauthorized",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_jwt}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"model\":\"Rio\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{statservice}}/{{apipath}}/reports/booking-by-models",
+							"host": [
+								"{{statservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"reports",
+								"booking-by-models"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OfficeStatValid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_jwt}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"location\":\"testlocation\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{statservice}}/{{apipath}}/reports/booking-by-offices",
+							"host": [
+								"{{statservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"reports",
+								"booking-by-offices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OfficeStatBrokenToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_jwt}}x",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"location\":\"testlocation\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{statservice}}/{{apipath}}/reports/booking-by-offices",
+							"host": [
+								"{{statservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"reports",
+								"booking-by-offices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OfficeStatWithoutToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"location\":\"testlocation\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{statservice}}/{{apipath}}/reports/booking-by-offices",
+							"host": [
+								"{{statservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"reports",
+								"booking-by-offices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OfficeStatWrongTokenType",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Blabla {{admin_jwt}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"location\":\"testlocation\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{statservice}}/{{apipath}}/reports/booking-by-offices",
+							"host": [
+								"{{statservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"reports",
+								"booking-by-offices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OfficeStatUnauthorized",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_jwt}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"location\":\"testlocation\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{statservice}}/{{apipath}}/reports/booking-by-models",
+							"host": [
+								"{{statservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"reports",
+								"booking-by-models"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Gateway",
+			"item": []
+		},
+		{
+			"name": "Delete",
+			"item": [
+				{
+					"name": "DeleteCarValid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{carservice}}/{{apipath}}/cars/{{car_uid}}",
+							"host": [
+								"{{carservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"cars",
+								"{{car_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteCarForbidden",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{carservice}}/{{apipath}}/cars/{{car_uid}}",
+							"host": [
+								"{{carservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"cars",
+								"{{car_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteCarInvalid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(404);\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{carservice}}/{{apipath}}/cars/{{zerouid}}",
+							"host": [
+								"{{carservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"cars",
+								"{{zerouid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteCarUnauthorized",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{carservice}}/{{apipath}}/cars/{{car_uid}}",
+							"host": [
+								"{{carservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"cars",
+								"{{car_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteOfficeCarValid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/car/{{car_uid}}",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices",
+								"{{office_uid}}",
+								"car",
+								"{{car_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteOfficeCarNotFound",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(404);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices/{{zerouid}}/car/{{zerouid}}",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices",
+								"{{zerouid}}",
+								"car",
+								"{{zerouid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteOfficeCarUnauthorized",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_jwt}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/car/{{car_uid}}",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices",
+								"{{office_uid}}",
+								"car",
+								"{{car_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteOfficeCarWrongTokenType",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Blabla {{admin_jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/car/{{car_uid}}",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices",
+								"{{office_uid}}",
+								"car",
+								"{{car_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteOfficeCarWithoutToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/car/{{car_uid}}",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices",
+								"{{office_uid}}",
+								"car",
+								"{{car_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteOfficeCarBrokenToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_jwt}}x",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/car/{{car_uid}}",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices",
+								"{{office_uid}}",
+								"car",
+								"{{car_uid}}"
 							]
 						}
 					},
@@ -3673,8 +4127,8 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 200\", () => {\r",
-									"    pm.expect(pm.response.code).to.eql(200);\r",
+									"pm.test(\"Status code is 404\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(404);\r",
 									"});"
 								],
 								"type": "text/javascript"
@@ -3858,397 +4312,6 @@
 					"response": []
 				}
 			]
-		},
-		{
-			"name": "Stat",
-			"item": [
-				{
-					"name": "ModelStatValid",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", () => {\r",
-									"    pm.expect(pm.response.code).to.eql(200);\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{user_jwt}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{statservice}}/{{apipath}}/reports/booking-by-models",
-							"host": [
-								"{{statservice}}"
-							],
-							"path": [
-								"{{apipath}}",
-								"reports",
-								"booking-by-models"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "ModelStatBrokenToken",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 401\", () => {\r",
-									"    pm.expect(pm.response.code).to.eql(401);\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{user_jwt}}x",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{statservice}}/{{apipath}}/reports/booking-by-models",
-							"host": [
-								"{{statservice}}"
-							],
-							"path": [
-								"{{apipath}}",
-								"reports",
-								"booking-by-models"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "ModelStatWithoutToken",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 401\", () => {\r",
-									"    pm.expect(pm.response.code).to.eql(401);\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{statservice}}/{{apipath}}/reports/booking-by-models",
-							"host": [
-								"{{statservice}}"
-							],
-							"path": [
-								"{{apipath}}",
-								"reports",
-								"booking-by-models"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "ModelStatWrongTokenType",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 401\", () => {\r",
-									"    pm.expect(pm.response.code).to.eql(401);\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Blabla {{user_jwt}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{statservice}}/{{apipath}}/reports/booking-by-models",
-							"host": [
-								"{{statservice}}"
-							],
-							"path": [
-								"{{apipath}}",
-								"reports",
-								"booking-by-models"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "ModelStatUnauthorized",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 401\", () => {\r",
-									"    pm.expect(pm.response.code).to.eql(401);\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{user_jwt}}",
-								"type": "text",
-								"disabled": true
-							}
-						],
-						"url": {
-							"raw": "{{statservice}}/{{apipath}}/reports/booking-by-models",
-							"host": [
-								"{{statservice}}"
-							],
-							"path": [
-								"{{apipath}}",
-								"reports",
-								"booking-by-models"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "OfficeStatValid",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", () => {\r",
-									"    pm.expect(pm.response.code).to.eql(200);\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{user_jwt}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{statservice}}/{{apipath}}/reports/booking-by-offices",
-							"host": [
-								"{{statservice}}"
-							],
-							"path": [
-								"{{apipath}}",
-								"reports",
-								"booking-by-offices"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "OfficeStatBrokenToken",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", () => {\r",
-									"    pm.expect(pm.response.code).to.eql(401);\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{user_jwt}}x",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{statservice}}/{{apipath}}/reports/booking-by-offices",
-							"host": [
-								"{{statservice}}"
-							],
-							"path": [
-								"{{apipath}}",
-								"reports",
-								"booking-by-offices"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "OfficeStatWithoutToken",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 401\", () => {\r",
-									"    pm.expect(pm.response.code).to.eql(401);\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{statservice}}/{{apipath}}/reports/booking-by-offices",
-							"host": [
-								"{{statservice}}"
-							],
-							"path": [
-								"{{apipath}}",
-								"reports",
-								"booking-by-offices"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "OfficeStatWrongTokenType",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 401\", () => {\r",
-									"    pm.expect(pm.response.code).to.eql(401);\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Blabla {{user_jwt}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{statservice}}/{{apipath}}/reports/booking-by-offices",
-							"host": [
-								"{{statservice}}"
-							],
-							"path": [
-								"{{apipath}}",
-								"reports",
-								"booking-by-offices"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "OfficeStatUnauthorized",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 401\", () => {\r",
-									"    pm.expect(pm.response.code).to.eql(401);\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{user_jwt}}",
-								"type": "text",
-								"disabled": true
-							}
-						],
-						"url": {
-							"raw": "{{statservice}}/{{apipath}}/reports/booking-by-models",
-							"host": [
-								"{{statservice}}"
-							],
-							"path": [
-								"{{apipath}}",
-								"reports",
-								"booking-by-models"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Gateway",
-			"item": []
 		}
 	]
 }
