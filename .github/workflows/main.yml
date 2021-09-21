@@ -1,24 +1,43 @@
-name: Build project
-on:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
+name: Deploy
+
+on: [push]
+
 jobs:
   build:
-    name: Build
     runs-on: ubuntu-latest
+    
     steps:
-      - uses: actions/checkout@v2
-      # TODO Build projects
-      # TODO deploy
-      # - name: Run API Tests
-      #  id: run-newman
-      #  uses: anthonyvscode/newman-action@v1
-      #  with:
-      #    collection: postman/postman-collection.json
-      #    environment: postman/postman-heroku-environment.json
-      #    delayRequest: 50
-      #    reporters: cli
+    - uses: actions/checkout@v1
+    
+    - name: Copy repository contents via scp
+      uses: appleboy/scp-action@master
+      env:
+        HOST: ${{ secrets.HOST }}
+        USERNAME: ${{ secrets.USERNAME }}
+        PORT: ${{ secrets.PORT }}
+        PASSWORD: ${{ secrets.PASSWORD }}
+      with:
+        source: "."
+        target: "carrental"
+        
+    - name: Run
+      uses: appleboy/ssh-action@master
+      with:
+        HOST: ${{ secrets.HOST }}
+        USERNAME: ${{ secrets.USERNAME }}
+        PORT: ${{ secrets.PORT }}
+        PASSWORD: ${{ secrets.PASSWORD }}
+        script: docker stop python_cargateway ; docker stop python_caruser ; docker stop python_carcar ; docker stop python_carrental ; docker stop python_carpayment ; docker stop python_caroffice ; docker stop python_carstat ; docker rm python_cargateway ; docker rm python_caruser ; docker rm python_carcar ; docker rm python_carrental ; docker rm python_carpayment ; docker rm python_caroffice ; docker rm caroffice ; docker rm carstat ; docker rmi cargateway ; docker rmi caruser ; docker rmi carcar ; docker rmi carrental ; docker rmi carpayment ; docker rmi caroffice ; docker rmi carstat ; cd ~/carrental/Gateway ; docker build -t cargateway ; cd ~/carrental/User ; docker build -t caruser ; cd ~/carrental/Car ; docker build -t carcar ; cd ~/carrental/Rental ; docker build -t carrental ; cd ~/carrental/Payment ; docker build -t carpayment ; cd ~/carrental/RentalOffice ; docker build -t caroffice ; cd ~/carrental/Report ; docker build -t carstat; docker run -d --rm -p 8010:80 --name python_cargateway ; docker run -d --rm -p 8000:80 --name python_caruser ; docker run -d --rm -p 8001:80 --name python_carcar ; docker run -d --rm -p 8002:80 --name python_carrental ; docker run -d --rm -p 8003:80 --name python_carpayment ; docker run -d --rm -p 8004:80 --name python_caroffice ; docker run -d --rm -p 8005:80 --name python_carstat ;
+    - name: Checkout
+      uses: actions/checkout@v1
+
+    - name: Run API Tests
+      id: run-newman
+      uses: anthonyvscode/newman-action@v1
+      with:
+        collection: RSOI-Cars-Rent.postman_collection.json
+        environment: RSOI-Cars-Rental.postman_environment.json
+        reporters: cli
+
+    - name: Output summary to console
+      run: echo ${{ steps.run-newman.outputs.summary }}
