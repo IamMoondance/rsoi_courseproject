@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+    <script>
+        window.onload = function()
+        {
+            if(getCookie("Authorization")!="")
+            {
+                redirectToHome();
+            }
+        };
+    </script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="row">
+                <nav class="navbar navbar-expand-lg ">
+                    <a class="navbar-brand" href="/">CarRent</a>
+                    <div class="collapse navbar-collapse menu">
+                        <ul class="navbar-nav">
+                            <li class="nav-item pl-2">
+                                <a class="nav-link" href="/">Главная</a>
+                            </li>
+                             <li class="nav-item pl-2">
+                                <a class="nav-link" href="/cars.html">Автомобили</a>
+                            </li>
+                            <li class="nav-item pl-2">
+                                <a class="nav-link" href="/offices.html">Офисы</a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </header>
+    <div class="container">
+        <div class="col-9" style="display: block; color: white;" id="div4">
+            <div style="padding-left: 30%;">
+                <form method="post">
+                    <div class="form-row" style="margin-left: 190px; display:inline;">
+
+                        <div class="col-3 pt-3" style="color:#280003; width:100%; display:inline;">
+                            <p style="margin-top:1%;">Логин</p>
+                            <input id="loginfield" name="Login" type="text" class="form-control" placeholder="Логин" style="display:inline; ">
+                        </div>
+                        <div class="col-3 pt-3" style="color:#280003; width:100%; display:inline;">
+                            <p style="margin-top:1%;">Пароль</p>
+                            <input id="passwordfield" name="Password" type="text" class="form-control" placeholder="Пароль" style="display:inline; ">
+                        </div>
+                        <div class="col-3 pt-3" style="color:#280003; width:100%; display:inline;">
+                            <p style="margin-top:1%;">Имя</p>
+                            <input id="namefield" name="Name" type="text" class="form-control" placeholder="Имя" style="display:inline; ">
+                        </div>
+                        <div class="col-3 pt-3" style="color:#280003; width:100%; display:inline;">
+                            <p style="margin-top:1%;">Фамилия</p>
+                            <input id="surnamefield" name="Surname" type="text" class="form-control" placeholder="Фамилия" style="display:inline; ">
+                        </div>
+                        <div class="col-3 pt-3" style="color:#280003; width:100%; display:inline;">
+                            <p style="margin-top:1%;">Отчество</p>
+                            <input id="patronymicfield" name="Patronymic" type="text" class="form-control" placeholder="Отчество" style="display:inline; ">
+                        </div>
+                        <p id="errormsg" style="color: red"></p>
+                        <button type="button" onclick="signUp()" class="btn " style=" background-color:#c2847a; color:#280003; width:40%; margin-left: 30%; margin-top: 20px;">
+                            Зарегистрироваться
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

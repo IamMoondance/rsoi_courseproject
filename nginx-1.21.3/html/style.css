@@ -1,0 +1,46 @@
+head{
+    margin: 0;
+    padding: 0;
+}
+h1{
+    margin: 0;
+    padding: 0;
+}
+
+html{
+    margin: 0;
+    padding: 0;
+}
+
+body{
+    margin: 0;
+    padding: 0;
+    background-color: #eee0cb;
+}
+
+
+header{
+    background-color: #c2847a;
+    
+}
+
+
+.navbar{
+    width: 100%;
+}
+
+.nav-link{
+    color:#280003;
+}
+
+.nav-link:hover{
+    color:#848586;
+}
+
+.navbar-brand{
+    color:#280003;
+}
+
+.navbar-brand:hover{
+    color:#848586;
+}

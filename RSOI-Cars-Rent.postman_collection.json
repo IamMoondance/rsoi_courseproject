@@ -1,0 +1,4254 @@
+{
+	"info": {
+		"_postman_id": "ee0ddeb5-9fd3-4270-b140-ef843a98c8ac",
+		"name": "RSOI-Cars-Rent",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "SignUpValid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", () => {\r",
+									"  pm.expect(pm.response.code).to.eql(201);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"login\":\"ivanych\",\r\n    \"password\":\"qwerty\",\r\n    \"surname\":\"Иванов\",\r\n    \"name\":\"Иван\",\r\n    \"patronymic\":\"Иванович\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{userservice}}/{{apipath}}/session/authorize",
+							"host": [
+								"{{userservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"session",
+								"authorize"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SignUpBrokenBody",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", () => {\r",
+									"  pm.expect(pm.response.code).to.eql(201);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"login\":\"test123\",\r\n    \"surname\":\"Иванов\",\r\n    \"name\":\"Иван\",\r\n    \"patronymic\":\"Иванович\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{userservice}}/{{apipath}}/session/authorize",
+							"host": [
+								"{{userservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"session",
+								"authorize"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SignUpLoginAlreadyExist",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 409\", () => {\r",
+									"  pm.expect(pm.response.code).to.eql(409);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"login\":\"ivanych\",\r\n    \"password\":\"qwerty\",\r\n    \"surname\":\"Иванов\",\r\n    \"name\":\"Иван\",\r\n    \"patronymic\":\"Иванович\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{userservice}}/{{apipath}}/session/authorize",
+							"host": [
+								"{{userservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"session",
+								"authorize"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "BasicSignInValid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {\r",
+									"  pm.expect(pm.response.code).to.eql(200);\r",
+									"});\r",
+									"\r",
+									"pm.environment.set(\"user_jwt\", pm.response.text());\r",
+									"\r",
+									"var payload = pm.response.text().split(\".\")[1];\r",
+									"\r",
+									"\r",
+									"var words = CryptoJS.enc.Base64.parse(payload);\r",
+									"var textString = CryptoJS.enc.Utf8.stringify(words);\r",
+									"\r",
+									"var user = JSON.parse(textString)\r",
+									"pm.environment.set(\"useruid\",user[\"userUid\"])"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic aXZhbnljaDpxd2VydHk=",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{userservice}}/{{apipath}}/session/authorize",
+							"host": [
+								"{{userservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"session",
+								"authorize"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "BasicSignInEmptyHeaderValue",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Basic"
+							}
+						],
+						"url": {
+							"raw": "{{userservice}}/{{apipath}}/session/authorize",
+							"host": [
+								"{{userservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"session",
+								"authorize"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "BasicSignInInvalid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(404);\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic aXZhbnljaDpxd2VydA==",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{userservice}}/{{apipath}}/session/authorize",
+							"host": [
+								"{{userservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"session",
+								"authorize"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "BasicSignInInvalidHeaderValue",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {\r",
+									"  pm.expect(pm.response.code).to.eql(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Basic aXZhbnljaDpxd2VydH"
+							}
+						],
+						"url": {
+							"raw": "{{userservice}}/{{apipath}}/session/authorize",
+							"host": [
+								"{{userservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"session",
+								"authorize"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "BearerSignInValid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(200);\r",
+									"})\r",
+									"\r",
+									"pm.environment.set(\"user_jwt\",pm.response.text())\r",
+									"\r",
+									"var payload = pm.response.text().split(\".\")[1];\r",
+									"\r",
+									"\r",
+									"var words = CryptoJS.enc.Base64.parse(payload);\r",
+									"var textString = CryptoJS.enc.Utf8.stringify(words);\r",
+									"\r",
+									"var user = JSON.parse(textString)\r",
+									"pm.environment.set(\"useruid\",user[\"userUid\"])"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{user_jwt}}"
+							}
+						],
+						"url": {
+							"raw": "{{userservice}}/{{apipath}}/session/authorize",
+							"host": [
+								"{{userservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"session",
+								"authorize"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "BearerSignInWithoutValue",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer"
+							}
+						],
+						"url": {
+							"raw": "{{userservice}}/{{apipath}}/session/authorize",
+							"host": [
+								"{{userservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"session",
+								"authorize"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SignInWithoutHeader",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "",
+								"type": "text",
+								"value": "",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{userservice}}/{{apipath}}/session/authorize",
+							"host": [
+								"{{userservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"session",
+								"authorize"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SignInInvalidHeaderType",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"  pm.expect(pm.response.code).to.eql(401);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Banana aXZhbnljaDpxd2VydHk="
+							}
+						],
+						"url": {
+							"raw": "{{userservice}}/{{apipath}}/session/authorize",
+							"host": [
+								"{{userservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"session",
+								"authorize"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ValidateTokenValid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{userservice}}/{{apipath}}/session/validate",
+							"host": [
+								"{{userservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"session",
+								"validate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ValidateTokenInvalid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {\r",
+									"  pm.response.to.have.status(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{user_jwt}}x"
+							}
+						],
+						"url": {
+							"raw": "{{userservice}}/{{apipath}}/session/validate",
+							"host": [
+								"{{userservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"session",
+								"validate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ValidateTokenIncorrectType",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {\r",
+									"  pm.response.to.have.status(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Basic {{user_jwt}}"
+							}
+						],
+						"url": {
+							"raw": "{{userservice}}/{{apipath}}/session/validate",
+							"host": [
+								"{{userservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"session",
+								"validate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ValidateTokenEmptyValue",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {\r",
+									"  pm.response.to.have.status(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer"
+							}
+						],
+						"url": {
+							"raw": "{{userservice}}/{{apipath}}/session/validate",
+							"host": [
+								"{{userservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"session",
+								"validate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ValidateTokenWithoutToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {\r",
+									"  pm.response.to.have.status(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": ""
+							}
+						],
+						"url": {
+							"raw": "{{userservice}}/{{apipath}}/session/validate",
+							"host": [
+								"{{userservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"session",
+								"validate"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cars",
+			"item": [
+				{
+					"name": "GetAllCarsUnauthorized",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{carservice}}/{{apipath}}/cars",
+							"host": [
+								"{{carservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"cars"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllCarsWrongToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}x",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{carservice}}/{{apipath}}/cars",
+							"host": [
+								"{{carservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"cars"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllCarsSuccess",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{carservice}}/{{apipath}}/cars",
+							"host": [
+								"{{carservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"cars"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddNewCarValid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});\r",
+									"\r",
+									"pm.environment.set(\"car_uid\",pm.response.text());"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"brand\": \"Kia\",\r\n    \"car_model\": \"Rio\",\r\n    \"power\": \"100\",\r\n    \"car_type\": \"Седан\",\r\n    \"price_per_hour\": 450\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{carservice}}/{{apipath}}/cars",
+							"host": [
+								"{{carservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"cars"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddNewCarUnauthorized",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"brand\": \"Kia\",\r\n    \"car_model\": \"Rio\",\r\n    \"power\": \"100\",\r\n    \"car_type\": \"Седан\",\r\n    \"price_per_hour\": 450\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{carservice}}/{{apipath}}/cars",
+							"host": [
+								"{{carservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"cars"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddNewCarForbidden",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"brand\": \"Kia\",\r\n    \"car_model\": \"Rio\",\r\n    \"power\": \"100\",\r\n    \"car_type\": \"Седан\",\r\n    \"price_per_hour\": 450\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{carservice}}/{{apipath}}/cars",
+							"host": [
+								"{{carservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"cars"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddNewCarInvalide",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"brand\": \"Kia\",\r\n    \"car_model\": \"Rio\",\r\n    \"power\": \"100\",\r\n    \"car_type\": \"Седан\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{carservice}}/{{apipath}}/cars",
+							"host": [
+								"{{carservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"cars"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteCarValid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{carservice}}/{{apipath}}/cars/{{car_uid}}",
+							"host": [
+								"{{carservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"cars",
+								"{{car_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteCarForbidden",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{carservice}}/{{apipath}}/cars/{{car_uid}}",
+							"host": [
+								"{{carservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"cars",
+								"{{car_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteCarInvalid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(404);\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{carservice}}/{{apipath}}/cars/{{car_uid}}",
+							"host": [
+								"{{carservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"cars",
+								"{{car_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteCarUnauthorized",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(200);\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{carservice}}/{{apipath}}/cars/{{car_uid}}",
+							"host": [
+								"{{carservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"cars",
+								"{{car_uid}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Payment",
+			"item": [
+				{
+					"name": "NewPaymentValid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\",() => {\r",
+									"    pm.expect(pm.response.code).to.eql(201);\r",
+									"});\r",
+									"\r",
+									"pm.environment.set(\"payment_uid\",pm.response.text());"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"price\":100\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{paymentservice}}/{{apipath}}/payment",
+							"host": [
+								"{{paymentservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"payment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NewPaymentInvalid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\",() => {\r",
+									"    pm.expect(pm.response.code).to.eql(400);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{user_jwt}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"price\":\"100\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{paymentservice}}/{{apipath}}/payment",
+							"host": [
+								"{{paymentservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"payment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NewPaymentUnauthorized",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\",() => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{user_jwt}}",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"price\":100\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{paymentservice}}/{{apipath}}/payment",
+							"host": [
+								"{{paymentservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"payment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NewPaymentWithoutToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\",() => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"price\":100\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{paymentservice}}/{{apipath}}/payment",
+							"host": [
+								"{{paymentservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"payment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NewPaymentWrongTokenType",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\",() => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Blabla {{user_jwt}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"price\":100\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{paymentservice}}/{{apipath}}/payment",
+							"host": [
+								"{{paymentservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"payment"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Offices",
+			"item": [
+				{
+					"name": "GetOfficesValid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetOfficesWrongTokenType",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "BlaBla {{user_jwt}}"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetOfficesEmptyToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetOfficesBrokenToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{user_jwt}}x"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetOfficesUnauthorized",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{user_jwt}}",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddNewOfficeValid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(201);\r",
+									"});\r",
+									"\r",
+									"pm.environment.set(\"office_uid\", pm.response.text());"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n     \"location\":\"testlocation\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddNewOfficeInvalid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(400);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{user_jwt}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n     \"location\":100\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddNewOfficeWrongTokenType",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Blabla {{user_jwt}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n     \"location\":\"testlocation\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddNewOfficeBrokenToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{user_jwt}}x"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n     \"location\":\"testlocation\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddNewOfficeWithoutToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n     \"location\":\"testlocation\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddNewOfficeUnauthorized",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{user_jwt}}",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n     \"location\":\"testlocation\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CarsInOfficeValid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/{{office_uid}}/cars",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"{{office_uid}}",
+								"cars"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CarsInOfficeNotFound",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(404);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{user_jwt}}"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/{{zerouid}}/cars",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"{{zerouid}}",
+								"cars"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CarsInOfficeBrokenToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{user_jwt}}x"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/{{office_uid}}/cars",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"{{office_uid}}",
+								"cars"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CarsInOfficeWrongTokenType",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Blabla {{user_jwt}}"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/{{office_uid}}/cars",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"{{office_uid}}",
+								"cars"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CarsInOfficeWithoutToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/{{office_uid}}/cars",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"{{office_uid}}",
+								"cars"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CarsInOfficeUnauthorized",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{user_jwt}}",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/{{office_uid}}/cars",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"{{office_uid}}",
+								"cars"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CarInAllOfficesValid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices/cars/{{car_uid}}",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices",
+								"cars",
+								"{{car_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CarInAllOfficesNotFound",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(404);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices/cars/{{zerouid}}",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices",
+								"cars",
+								"{{zerouid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CarInAllOfficesBrokenToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}x",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices/cars/{{car_uid}}",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices",
+								"cars",
+								"{{car_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CarInAllOfficesWrongTokenType",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Blabla {{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices/cars/{{car_uid}}",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices",
+								"cars",
+								"{{car_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CarInAllOfficesWithoutToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices/cars/{{car_uid}}",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices",
+								"cars",
+								"{{car_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CarInAllOfficesUnauthorized",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices/cars/{{car_uid}}",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices",
+								"cars",
+								"{{car_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OfficeCarInfoValid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}//offices/{{office_uid}}/cars/{{car_uid}}",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"",
+								"offices",
+								"{{office_uid}}",
+								"cars",
+								"{{car_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OfficeCarInfoNotFoundOffice",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(404);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}//offices/{{zerouid}}/cars/{{car_uid}}",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"",
+								"offices",
+								"{{zerouid}}",
+								"cars",
+								"{{car_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OfficeCarInfoNotFoundCar",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(404);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}//offices/{{office_uid}}/cars/{{zerouid}}",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"",
+								"offices",
+								"{{office_uid}}",
+								"cars",
+								"{{zerouid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OfficeCarInfoUnauthorized",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}//offices/{{office_uid}}/cars/{{car_uid}}",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"",
+								"offices",
+								"{{office_uid}}",
+								"cars",
+								"{{car_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OfficeCarInfoWrongTokenType",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Blabla {{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}//offices/{{office_uid}}/cars/{{car_uid}}",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"",
+								"offices",
+								"{{office_uid}}",
+								"cars",
+								"{{car_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OfficeCarInfoWithoutToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}//offices/{{office_uid}}/cars/{{car_uid}}",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"",
+								"offices",
+								"{{office_uid}}",
+								"cars",
+								"{{car_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OfficeCarInfoBrokenToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}x",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}//offices/{{office_uid}}/cars/{{car_uid}}",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"",
+								"offices",
+								"{{office_uid}}",
+								"cars",
+								"{{car_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddOfficeCarValid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/car/{{car_uid}}",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices",
+								"{{office_uid}}",
+								"car",
+								"{{car_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddOfficeCarNotFoundCar",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(404);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/car/{{car_uid}}",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices",
+								"{{office_uid}}",
+								"car",
+								"{{car_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddOfficeCarNotFoundOffice",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(404);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/car/{{car_uid}}",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices",
+								"{{office_uid}}",
+								"car",
+								"{{car_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddOfficeCarUnauthorized",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/car/{{car_uid}}",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices",
+								"{{office_uid}}",
+								"car",
+								"{{car_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddOfficeCarBrokenToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}x",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/car/{{car_uid}}",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices",
+								"{{office_uid}}",
+								"car",
+								"{{car_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddOfficeCarWithoutToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/car/{{car_uid}}",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices",
+								"{{office_uid}}",
+								"car",
+								"{{car_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddOfficeCarWrongTokenType",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Blabla {{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/car/{{car_uid}}",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices",
+								"{{office_uid}}",
+								"car",
+								"{{car_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteOfficeCarValid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/car/{{car_uid}}",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices",
+								"{{office_uid}}",
+								"car",
+								"{{car_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteOfficeCarNotFound",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices/{{zerouid}}/car/{{zerouid}}",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices",
+								"{{zerouid}}",
+								"car",
+								"{{zerouid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteOfficeCarUnauthorized",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/car/{{car_uid}}",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices",
+								"{{office_uid}}",
+								"car",
+								"{{car_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteOfficeCarWrongTokenType",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Blabla {{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/car/{{car_uid}}",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices",
+								"{{office_uid}}",
+								"car",
+								"{{car_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteOfficeCarWithoutToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/car/{{car_uid}}",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices",
+								"{{office_uid}}",
+								"car",
+								"{{car_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteOfficeCarBrokenToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}x",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{officesservice}}/{{apipath}}/offices/{{office_uid}}/car/{{car_uid}}",
+							"host": [
+								"{{officesservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"offices",
+								"{{office_uid}}",
+								"car",
+								"{{car_uid}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Rental",
+			"item": [
+				{
+					"name": "NewRentValid",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var moment = require('moment');\r",
+									"\r",
+									"pm.environment.set('start_date', moment().add(1, 'days').format((\"YYYY-MM-DD\")));\r",
+									"pm.environment.set('end_date', moment().add(3, 'days').format((\"YYYY-MM-DD\")));"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(201);\r",
+									"});\r",
+									"\r",
+									"pm.environment.set(\"rental_uid\",pm.response.text());"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"car_uid\": \"{{car_uid}}\",\r\n    \"user_uid\": \"{{useruid}}\",\r\n    \"payment_uid\": \"{{payment_uid}}\",\r\n    \"rent_from\": \"{{start_date}}\",\r\n    \"rent_until\": \"{{end_date}}\",\r\n    \"rec_office_uid\":{{office_uid}},\r\n    \"ret_office_uid\":{{office_uid}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{rentalservice}}/{{apipath}}/rental",
+							"host": [
+								"{{rentalservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"rental"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NewRentInvalid",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var moment = require('moment');\r",
+									"\r",
+									"pm.environment.set('start_date', moment().add(1, 'days').format((\"YYYY-MM-DD\")));\r",
+									"pm.environment.set('end_date', moment().add(3, 'days').format((\"YYYY-MM-DD\")));"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(400);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"car_uid\": \"{{car_uid}}\",\r\n    \"user_uid\": \"{{useruid}}\",\r\n    \"payment_uid\": \"{{payment_uid}}\",\r\n    \"rent_from\": \"{{start_date}}\",\r\n    \"rent_until\": \"{{end_date}}\",\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{rentalservice}}/{{apipath}}/rental",
+							"host": [
+								"{{rentalservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"rental"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NewRentBrokenToken",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var moment = require('moment');\r",
+									"\r",
+									"pm.environment.set('start_date', moment().add(1, 'days').format((\"YYYY-MM-DD\")));\r",
+									"pm.environment.set('end_date', moment().add(3, 'days').format((\"YYYY-MM-DD\")));"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}x",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"car_uid\": \"{{car_uid}}\",\r\n    \"user_uid\": \"{{useruid}}\",\r\n    \"payment_uid\": \"{{payment_uid}}\",\r\n    \"rent_from\": \"{{start_date}}\",\r\n    \"rent_until\": \"{{end_date}}\",\r\n    \"rec_office_uid\":{{office_uid}},\r\n    \"ret_office_uid\":{{office_uid}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{rentalservice}}/{{apipath}}/rental",
+							"host": [
+								"{{rentalservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"rental"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NewRentWrongTokenType",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var moment = require('moment');\r",
+									"\r",
+									"pm.environment.set('start_date', moment().add(1, 'days').format((\"YYYY-MM-DD\")));\r",
+									"pm.environment.set('end_date', moment().add(3, 'days').format((\"YYYY-MM-DD\")));"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Blabla {{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"car_uid\": \"{{car_uid}}\",\r\n    \"user_uid\": \"{{useruid}}\",\r\n    \"payment_uid\": \"{{payment_uid}}\",\r\n    \"rent_from\": \"{{start_date}}\",\r\n    \"rent_until\": \"{{end_date}}\",\r\n    \"rec_office_uid\":{{office_uid}},\r\n    \"ret_office_uid\":{{office_uid}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{rentalservice}}/{{apipath}}/rental",
+							"host": [
+								"{{rentalservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"rental"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NewRentWithoutToken",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var moment = require('moment');\r",
+									"\r",
+									"pm.environment.set('start_date', moment().add(1, 'days').format((\"YYYY-MM-DD\")));\r",
+									"pm.environment.set('end_date', moment().add(3, 'days').format((\"YYYY-MM-DD\")));"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"car_uid\": \"{{car_uid}}\",\r\n    \"user_uid\": \"{{useruid}}\",\r\n    \"payment_uid\": \"{{payment_uid}}\",\r\n    \"rent_from\": \"{{start_date}}\",\r\n    \"rent_until\": \"{{end_date}}\",\r\n    \"rec_office_uid\":{{office_uid}},\r\n    \"ret_office_uid\":{{office_uid}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{rentalservice}}/{{apipath}}/rental",
+							"host": [
+								"{{rentalservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"rental"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NewRentUnauthorized",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var moment = require('moment');\r",
+									"\r",
+									"pm.environment.set('start_date', moment().add(1, 'days').format((\"YYYY-MM-DD\")));\r",
+									"pm.environment.set('end_date', moment().add(3, 'days').format((\"YYYY-MM-DD\")));"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"car_uid\": \"{{car_uid}}\",\r\n    \"user_uid\": \"{{useruid}}\",\r\n    \"payment_uid\": \"{{payment_uid}}\",\r\n    \"rent_from\": \"{{start_date}}\",\r\n    \"rent_until\": \"{{end_date}}\",\r\n    \"rec_office_uid\":{{office_uid}},\r\n    \"ret_office_uid\":{{office_uid}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{rentalservice}}/{{apipath}}/rental",
+							"host": [
+								"{{rentalservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"rental"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FinishRentValid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{rentalservice}}/{{apipath}}/rental/{{rental_uid}}",
+							"host": [
+								"{{rentalservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"rental",
+								"{{rental_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FinishRentNotFound",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(404);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{rentalservice}}/{{apipath}}/rental/{{zerouid}}",
+							"host": [
+								"{{rentalservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"rental",
+								"{{zerouid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FinishRentUnauthorized",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{rentalservice}}/{{apipath}}/rental/{{rental_uid}}",
+							"host": [
+								"{{rentalservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"rental",
+								"{{rental_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FinishRentWithoutToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{rentalservice}}/{{apipath}}/rental/{{rental_uid}}",
+							"host": [
+								"{{rentalservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"rental",
+								"{{rental_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FinishRentBrokenToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}x",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{rentalservice}}/{{apipath}}/rental/{{rental_uid}}",
+							"host": [
+								"{{rentalservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"rental",
+								"{{rental_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FinishRentWrongTokenType",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{rentalservice}}/{{apipath}}/rental/{{rental_uid}}",
+							"host": [
+								"{{rentalservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"rental",
+								"{{rental_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CancelRentValid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{rentalservice}}/{{apipath}}/rental/{{rental_uid}}",
+							"host": [
+								"{{rentalservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"rental",
+								"{{rental_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CancelRentNotFound",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{rentalservice}}/{{apipath}}/rental/{{zerouid}}",
+							"host": [
+								"{{rentalservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"rental",
+								"{{zerouid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CancelRentUnauthorized",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{rentalservice}}/{{apipath}}/rental/{{rental_uid}}",
+							"host": [
+								"{{rentalservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"rental",
+								"{{rental_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CancelRentBrokenToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}x",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{rentalservice}}/{{apipath}}/rental/{{rental_uid}}",
+							"host": [
+								"{{rentalservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"rental",
+								"{{rental_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CancelRentWithoutToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{rentalservice}}/{{apipath}}/rental/{{rental_uid}}",
+							"host": [
+								"{{rentalservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"rental",
+								"{{rental_uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CancelRentWrongTokenType",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Blabla {{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{rentalservice}}/{{apipath}}/rental/{{rental_uid}}",
+							"host": [
+								"{{rentalservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"rental",
+								"{{rental_uid}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Stat",
+			"item": [
+				{
+					"name": "ModelStatValid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{statservice}}/{{apipath}}/reports/booking-by-models",
+							"host": [
+								"{{statservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"reports",
+								"booking-by-models"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ModelStatBrokenToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}x",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{statservice}}/{{apipath}}/reports/booking-by-models",
+							"host": [
+								"{{statservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"reports",
+								"booking-by-models"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ModelStatWithoutToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{statservice}}/{{apipath}}/reports/booking-by-models",
+							"host": [
+								"{{statservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"reports",
+								"booking-by-models"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ModelStatWrongTokenType",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Blabla {{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{statservice}}/{{apipath}}/reports/booking-by-models",
+							"host": [
+								"{{statservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"reports",
+								"booking-by-models"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ModelStatUnauthorized",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{statservice}}/{{apipath}}/reports/booking-by-models",
+							"host": [
+								"{{statservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"reports",
+								"booking-by-models"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OfficeStatValid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{statservice}}/{{apipath}}/reports/booking-by-offices",
+							"host": [
+								"{{statservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"reports",
+								"booking-by-offices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OfficeStatBrokenToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}x",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{statservice}}/{{apipath}}/reports/booking-by-offices",
+							"host": [
+								"{{statservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"reports",
+								"booking-by-offices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OfficeStatWithoutToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{statservice}}/{{apipath}}/reports/booking-by-offices",
+							"host": [
+								"{{statservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"reports",
+								"booking-by-offices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OfficeStatWrongTokenType",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Blabla {{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{statservice}}/{{apipath}}/reports/booking-by-offices",
+							"host": [
+								"{{statservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"reports",
+								"booking-by-offices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OfficeStatUnauthorized",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_jwt}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{statservice}}/{{apipath}}/reports/booking-by-models",
+							"host": [
+								"{{statservice}}"
+							],
+							"path": [
+								"{{apipath}}",
+								"reports",
+								"booking-by-models"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Gateway",
+			"item": []
+		}
+	]
+}

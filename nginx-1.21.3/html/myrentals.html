@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+    <title>Мои заказы</title>
+    <script src="script.js"></script>
+    <script>
+        window.onload = function()
+        {
+            checkAuth();
+            fillRentalTable();
+        };
+    </script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="row">
+                <nav class="navbar navbar-expand-lg ">
+                    <a class="navbar-brand" href="/">CarRent</a>
+                    <div class="collapse navbar-collapse menu">
+                        <ul class="navbar-nav">
+                            <li class="nav-item pl-2">
+                                <a class="nav-link" href="/">Главная</a>
+                            </li>
+                              <li class="nav-item pl-2">
+                                <a class="nav-link" href="/cars.html">Автомобили</a>
+                            </li>
+                            <li class="nav-item pl-2">
+                                <a class="nav-link" href="/offices.html">Офисы</a>
+                            </li>
+                            <li class="nav-item pl-2">
+                                <a class="nav-link" href="/myrentals.html">Мои заказы</a>
+                            </li>
+                        </ul>
+                        <ul class="navbar-nav" style="float:right;">
+                            <li class="nav-item pl-2" style="float:left;">
+                                <a class="nav-link" href="/" onclick="logout()">Выход</a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+
+        <div class="container">
+        <div class="col-9" style=" display: block; color: white;" id="div5">
+            <div style="padding-left: 50px;">
+                 <p style="margin-left: 100px; margin-top: 20px; color:black;">Мои заказы</p>
+                <p id="errormsg" style="color: red"></p>
+                <table id= "rentaltable" class="table" style="margin-left: 100px; margin-top: 20px;">
+                        <thead>
+                            <tr>
+                                <th scope="col">Автомобиль</th>
+                                <th scope="col">Дата начала</th>
+                                <th scope="col">Дата окончания</th>
+                                <th scope="col">Офис</th>
+                                <th scope="col">Цена</th>
+                                <th scope="col">Статус</th>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+
+                </table>
+            </div>
+        </div>
+
+
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+     <script>
+        window.onload = function()
+        {
+            if(getCookie("Authorization")!="")
+            {
+                redirectToHome();
+            }
+        };
+    </script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="row">
+                <nav class="navbar navbar-expand-lg ">
+                    <a class="navbar-brand" href="/">CarRent</a>
+                    <div class="collapse navbar-collapse menu">
+                        <ul class="navbar-nav">
+                            <li class="nav-item pl-2">
+                                <a class="nav-link" href="/">Главная</a>
+                            </li>
+                              <li class="nav-item pl-2">
+                                <a class="nav-link" href="/cars.html">Автомобили</a>
+                            </li>
+                            <li class="nav-item pl-2">
+                                <a class="nav-link" href="/offices.html">Офисы</a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </header>
+    <div class="container">
+        <div class="col-9">
+            <div style="padding-left: 50px;">
+                <form method="get">
+                    <div class="form-row" style="margin-left: 190px;">
+                        <div style="width: 45%; padding:2.5%">
+                            <input id="loginfield" name="Login" type="text" class="form-control" placeholder="Логин">
+                        </div>
+                        <div style="width: 45%; padding:2.5%">
+                            <input id="passwordfield" name="Password" type="text" class="form-control" placeholder="Пароль">
+                        </div>
+                    </div>
+                    <p id="errormsg" style="color: red"></p>
+                    <div style="margin-left: 50%; margin-top: 20px;">
+                        <button type="button" onclick="signIn()" class="btn " style="width:30%; background-color:#c2847a; color:#280003;">
+                            Войти
+                        </button>
+                       
+                    </div>
+                </form>
+                <button onclick="redirectToSignUp()" class="btn " style=" margin-left: 35%; margin-top: 20px; width:45%; background-color:#c2847a; color:#280003;">
+                    Зарегистрироваться
+                </button>
+                
+            </div>
+        </div>
+    </div>
+</body>
+</html>

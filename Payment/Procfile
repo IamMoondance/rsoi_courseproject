@@ -1,0 +1,3 @@
+worker: python manage.py makemigrations
+worker: python manage.py migrate
+web: gunicorn Payment.wsgi --log-file -
