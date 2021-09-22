@@ -12,7 +12,9 @@ import uuid
 from .models import Payment
 from .serializers import PaymentSerializer
 
-AUTHLOCATION = 'http://127.0.0.1:8000'
+##AUTHLOCATION = 'http://127.0.0.1:8000'
+
+AUTHLOCATION = 'http://80.78.251.85:8000'
 
 class PaymentInfoView(APIView):
     def get(self, request, paymentUid):

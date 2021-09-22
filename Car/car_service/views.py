@@ -13,8 +13,11 @@ import jwt
 from .models import Car
 from .serializers import CarSerializer
 
-AUTHLOCATION = "http://127.0.0.1:8000"
-STATLOCATION = "http://127.0.0.1:8005"
+##AUTHLOCATION = "http://127.0.0.1:8000"
+##STATLOCATION = "http://127.0.0.1:8005"
+
+AUTHLOCATION = "http://80.78.251.85:8000"
+STATLOCATION = "http://80.78.251.85:8005"
 
 # GET /cars
 # POST /cars

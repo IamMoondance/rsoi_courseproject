@@ -14,9 +14,13 @@ import jwt
 from .models import RentalOffice, OfficeCar
 from .serializers import RentalOfficeSerializer, OfficeCarSerializer
 
-AUTHLOCATION = "http://127.0.0.1:8000"
-CARLOCATION = "http://127.0.0.1:8001"
-STATLOCATION = "http://127.0.0.1:8005"
+##AUTHLOCATION = "http://127.0.0.1:8000"
+##CARLOCATION = "http://127.0.0.1:8001"
+##STATLOCATION = "http://127.0.0.1:8005"
+
+AUTHLOCATION = "http://80.78.251.85:8000"
+CARLOCATION = "http://80.78.251.85:8001"
+STATLOCATION = "http://80.78.251.85:8005"
 
 class OfficeInfoView(APIView):
     def get(self, request, officeUid):

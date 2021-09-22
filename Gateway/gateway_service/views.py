@@ -19,11 +19,17 @@ from rest_framework.decorators import permission_classes
 
 from django.core import serializers
 
-AUTHLOCATION = "http://127.0.0.1:8000"
-CARLOCATION = "http://127.0.0.1:8001"
-RENTALLOCATION = "http://127.0.0.1:8002"
-OFFICESLOCATION = "http://127.0.0.1:8004"
-PAYMENTLOCATION = "http://127.0.0.1:8003"
+##AUTHLOCATION = "http://127.0.0.1:8000"
+##CARLOCATION = "http://127.0.0.1:8001"
+##RENTALLOCATION = "http://127.0.0.1:8002"
+##OFFICESLOCATION = "http://127.0.0.1:8004"
+##PAYMENTLOCATION = "http://127.0.0.1:8003"
+
+AUTHLOCATION = "http://80.78.251.85:8000"
+CARLOCATION = "http://80.78.251.85:8001"
+RENTALLOCATION = "http://80.78.251.85:8002"
+OFFICESLOCATION = "http://80.78.251.85:8004"
+PAYMENTLOCATION = "http://80.78.251.85:8003"
 
 # Вывод домашней страницы
 class IndexView(APIView):
