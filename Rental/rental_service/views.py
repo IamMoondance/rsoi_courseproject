@@ -180,12 +180,6 @@ class EndRentalView(APIView):
             return http_response
 
         rental = get_object_or_404(Rental, id=rentalUid)
-        if rental.status == "CLOSED":
-            return HttpResponse(content={"Аренда уже была отменена."},
-                                status=409)
-        elif rental.status == "FINISHED":
-            return HttpResponse(content={"Невозможно завершить отменённую аренду."},
-                                status=409)
         rental.status = "CLOSED"
         rental.save()
         http_response = HttpResponse(status=200, content_type='application/json')
@@ -213,9 +207,6 @@ class EndRentalView(APIView):
             return http_response
 
         rental = get_object_or_404(Rental, id=rentalUid)
-        if rental.status == "FINISHED":
-            return HttpResponse(content={"Уже было завершено."},
-                                status=409)
         rental.status = "FINISHED"
         rental.save()
         http_response = HttpResponse(status=200, content_type='application/json')
