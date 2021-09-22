@@ -4,4 +4,4 @@ djangorestframework
 requests
 pika
 PyJWT
-base64
+cryptography
