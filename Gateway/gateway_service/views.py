@@ -42,10 +42,16 @@ class OfficeListView(APIView):
         try:
             user_response = requests.get(OFFICESLOCATION+'/api/v1/offices',
                                          headers={'Authorization': request.headers['Authorization']})
+        except:
+            http_response = HttpResponse(status=401, content_type='application/json')
+            return http_response
+        try:
             http_response = HttpResponse(user_response.text, status=user_response.status_code,
                                          content_type='application/json')
         except:
-            http_response = HttpResponse(status=401, content_type='application/json')
+            http_response = HttpResponse(
+                    content={"External server error. RentalOffice service is down."},
+                    status=422)
         return http_response
 
 # Информация об офисе
@@ -54,10 +60,16 @@ class OfficeInfoView(APIView):
         try:
             user_response = requests.get(OFFICESLOCATION + '/api/v1/offices/'+str(officeUid),
                                          headers={'Authorization': request.headers['Authorization']})
+        except:
+            http_response = HttpResponse(status=401, content_type='application/json')
+            return http_response
+        try:
             http_response = HttpResponse(user_response.text, status=user_response.status_code,
                                          content_type='application/json')
         except:
-            http_response = HttpResponse(status=401, content_type='application/json')
+            http_response = HttpResponse(
+                    content={"External server error. RentalOffice service is down."},
+                    status=422)
         return http_response
 
 # Список автомобилей
@@ -66,10 +78,16 @@ class CarListView(APIView):
         try:
             user_response = requests.get(CARLOCATION + '/api/v1/cars',
                                          headers={'Authorization': request.headers['Authorization']})
+        except:
+            http_response = HttpResponse(status=401, content_type='application/json')
+            return http_response
+        try:
             http_response = HttpResponse(user_response.text, status=user_response.status_code,
                                          content_type='application/json')
         except:
-            http_response = HttpResponse(status=401, content_type='application/json')
+            http_response = HttpResponse(
+                    content={"External server error. Car service is down."},
+                    status=422)
         return http_response
 
 # Список автомобилей офиса
@@ -78,10 +96,16 @@ class OfficeCarInfoView(APIView):
         try:
             user_response = requests.get(OFFICESLOCATION + '/api/v1/offices/'+str(officeUid)+'/cars',
                                          headers={'Authorization': request.headers['Authorization']})
+        except:
+            http_response = HttpResponse(status=401, content_type='application/json')
+            return http_response
+        try:
             http_response = HttpResponse(user_response.text, status=user_response.status_code,
                                          content_type='application/json')
         except:
-            http_response = HttpResponse(status=401, content_type='application/json')
+            http_response = HttpResponse(
+                    content={"External server error. RentalOffice service is down."},
+                    status=422)
         return http_response
 
 # Бронирование автомобиля
@@ -120,10 +144,10 @@ class RentalView(APIView):
             try:
                 car_response = requests.get(CARLOCATION + '/api/v1/cars/' + i["car_uid"],
                                             headers={'Authorization': request.headers['Authorization']})
-                if car_response.status_code != 200:
-                    http_response = HttpResponse(car_response.text, status=car_response.status_code,
-                                                 content_type="application/json")
-                    return http_response
+##                if car_response.status_code != 200:
+##                    http_response = HttpResponse(car_response.text, status=car_response.status_code,
+##                                                 content_type="application/json")
+##                    return http_response
                 car_json = car_response.json()
                 tmp_data['car'] = car_json["brand"]+" "+car_json["car_model"]
             except:
@@ -132,10 +156,10 @@ class RentalView(APIView):
             try:
                 office_response = requests.get(OFFICESLOCATION+'/api/v1/offices/'+i["office_uid"],
                                               headers={'Authorization': request.headers['Authorization']})
-                if office_response.status_code != 200:
-                    http_response = HttpResponse(office_response.text, status=office_response.status_code,
-                                                 content_type="application/json")
-                    return http_response
+##                if office_response.status_code != 200:
+##                    http_response = HttpResponse(office_response.text, status=office_response.status_code,
+##                                                 content_type="application/json")
+##                    return http_response
                 tmp_data['office'] = office_response.json()["location"]
             except:
                 pass
@@ -144,10 +168,10 @@ class RentalView(APIView):
                 payment_response = requests.get(PAYMENTLOCATION+'/api/v1/payment/'+i["payment_uid"],
                                                headers={'Authorization': request.headers['Authorization']})
 
-                if payment_response.status_code != 200:
-                    http_response = HttpResponse(payment_response.text, status=payment_response.status_code,
-                                                 content_type="application/json")
-                    return http_response
+##                if payment_response.status_code != 200:
+##                    http_response = HttpResponse(payment_response.text, status=payment_response.status_code,
+##                                                 content_type="application/json")
+##                    return http_response
                 tmp_data['price'] = payment_response.json()["price"]
             except:
                 pass
@@ -289,10 +313,15 @@ class SignInView(APIView):
         try:
             user_response = requests.get(AUTHLOCATION+'/api/v1/session/authorize',
                                          headers={'Authorization': request.headers['Authorization']})
+        except:
+            http_response = HttpResponse(status=400, content_type='application/json')
+        try:
             http_response = HttpResponse(user_response.text, status=user_response.status_code,
                                          content_type='application/json')
         except:
-            http_response = HttpResponse(status=400, content_type='application/json')
+            http_response = HttpResponse(
+                    content={"External server error. User service is down."},
+                    status=422)
         return http_response
 
 # Регистрация
