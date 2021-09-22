@@ -101,7 +101,7 @@ class RentalView(APIView):
             rent_from = datetime.datetime.combine(datetime.date.fromisoformat(body['rent_from']), datetime.datetime.min.time())
             rent_until = datetime.datetime.combine(datetime.date.fromisoformat(body['rent_until']), datetime.datetime.min.time())
 
-            this_car_rental = Rental.objects.filter(car_uid=car_uid)
+            this_car_rental = Rental.objects.filter(car_uid=car_uid, status='NEW')
             for r in this_car_rental:
                 if (r.rent_from.replace(tzinfo=utc) <= rent_from.replace(tzinfo=utc) and rent_from.replace(tzinfo=utc) <= r.rent_until.replace(tzinfo=utc)) \
                 or (r.rent_from.replace(tzinfo=utc) <= rent_until.replace(tzinfo=utc) and rent_until.replace(tzinfo=utc) <= r.rent_until.replace(tzinfo=utc)):
