@@ -31,6 +31,10 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v1
 
+    - name: Sleep for 30 seconds
+      run: sleep 30s
+      shell: bash
+
     - name: Run API Tests
       id: run-newman
       uses: anthonyvscode/newman-action@v1
