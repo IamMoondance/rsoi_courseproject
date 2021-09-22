@@ -92,7 +92,8 @@ DATABASES = {
         'NAME': 'CarRentalReports',
         'USER': 'CarRental',
         'PASSWORD': 'qwerty',
-        'HOST': '127.0.0.1',
+##        'HOST': '127.0.0.1',
+        'HOST': '80.78.251.85',
         'PORT': '5432',
     }
 }
