@@ -225,8 +225,10 @@ class InitDBView(APIView):
     def get(self, request):
         adm = User.objects.filter(login="admin")
         if len(adm) == 0:
-            admin_data = User(user_uid=uuid.uuid1(), login='admin',
-                        password='admin', surname='AdminSurname', name='AdminName',
+            count_id = len(User.objects.all()) + 1
+            admin_data = User(id=count_id, user_uid=uuid.uuid1(), login='admin',
+                        password=hash_password('admin'), surname='AdminSurname',
+                        name='AdminName',
                         patronymic='AdminPatronymic', role=True, refresh_token='')
             admin_data.save()
         return HttpResponse(status=204)
