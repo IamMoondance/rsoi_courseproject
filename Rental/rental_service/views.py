@@ -141,10 +141,7 @@ class RentalView(APIView):
             requests.post(STATLOCATION+'/api/v1/reports/booking-by-models', data={"model": model},
                           headers={'Authorization': auth_header})
         except:
-            http_response = HttpResponse(
-                    content={"External server error. Report service is down."},
-                    status=422)
-            return http_response
+            pass
 
         try:
             requests.post(STATLOCATION+'/api/v1/reports/booking-by-offices', data={"location": location},

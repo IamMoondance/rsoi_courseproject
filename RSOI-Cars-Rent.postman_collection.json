@@ -2712,7 +2712,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"car_uid\": \"{{car_uid}}\",\r\n    \"user_uid\": \"{{useruid}}\",\r\n    \"payment_uid\": \"{{payment_uid}}\",\r\n    \"rent_from\": \"{{start_date}}\",\r\n    \"rent_until\": \"{{end_date}}\"\r\n}",
+							"raw": "{\r\n    \"car_uid\": \"{{car_uid}}\",\r\n    \"payment_uid\": \"{{payment_uid}}\",\r\n    \"rent_from\": \"{{start_date}}\",\r\n    \"rent_until\": \"{{end_date}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
